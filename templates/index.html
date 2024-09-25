@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSL Certificate Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>SSL Certificate Generator</h1>
+        <p>这个系统现在可以生成真实的SSL证书。请谨慎使用，并确保你有权限为指定的域名生成证书。</p>
+        <form id="certForm">
+            <div class="form-group">
+                <label for="countryName">国家代码：</label>
+                <input type="text" id="countryName" name="countryName" value="CN" required>
+                <span class="tooltip">?
+                    <span class="tooltiptext">两字母国家代码（例如：CN 代表中国）</span>
+                </span>
+            </div>
+
+            <div class="form-group">
+                <label for="orgName">组织名称：</label>
+                <input type="text" id="orgName" name="orgName" value="Myweb" required>
+                <span class="tooltip">?
+                    <span class="tooltiptext">你的组织名称</span>
+                </span>
+            </div>
+
+            <div class="form-group">
+                <label for="ouName">组织单位名称：</label>
+                <input type="text" id="ouName" name="ouName" value="Myweb Application" required>
+                <span class="tooltip">?
+                    <span class="tooltiptext">你的部门或单位名称</span>
+                </span>
+            </div>
+
+            <div class="form-group">
+                <label for="cnRoot">根证书通用名称：</label>
+                <input type="text" id="cnRoot" name="cnRoot" value="Application" required>
+                <span class="tooltip">?
+                    <span class="tooltiptext">根证书的通用名称</span>
+                </span>
+            </div>
+
+            <div class="form-group">
+                <label for="cnSub">子证书通用名称：</label>
+                <input type="text" id="cnSub" name="cnSub" value="his-erp-lingqu.Mywebcloud.com" required>
+                <span class="tooltip">?
+                    <span class="tooltiptext">子证书的通用名称（通常是你的域名）</span>
+                </span>
+            </div>
+
+            <div class="form-group">
+                <label for="password">密码：</label>
+                <input type="password" id="password" name="password" value="changeit" required>
+                <span class="tooltip">?
+                    <span class="tooltiptext">用于keystore和truststore的密码</span>
+                </span>
+            </div>
+
+            <div class="form-group">
+                <label for="durationDays">有效期（天）：</label>
+                <input type="number" id="durationDays" name="durationDays" value="18250" required>
+                <span class="tooltip">?
+                    <span class="tooltiptext">证书的有效期（以天为单位）</span>
+                </span>
+            </div>
+
+            <input type="submit" value="生成证书">
+        </form>
+
+        <div id="results">
+            <h2>生成结果：</h2>
+            <div id="resultContent"></div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
