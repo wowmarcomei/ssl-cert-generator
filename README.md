@@ -77,17 +77,28 @@
 
 1. 在GitHub仓库中，进入 "Settings" > "Secrets and variables" > "Actions"。
 
-2. 添加以下秘密：
+2. 添加以下secrets：
    - `DOCKERHUB_USERNAME`: 你的Docker Hub用户名
    - `DOCKERHUB_TOKEN`: 你的Docker Hub访问令牌（不是密码）
 
-3. 确保你的GitHub账户有权限推送到GitHub Container Registry。如果没有，你可能需要在个人设置中启用它。
+   注意：如果你没有Docker Hub账号或不想推送到Docker Hub，可以跳过这一步。Action会自动只推送到GitHub Container Registry。
 
-4. 推送代码到main分支或创建一个pull request到main分支，这将触发GitHub Action。
+3. 获取Docker Hub访问令牌：
+   - 登录到你的Docker Hub账户
+   - 点击你的用户名，然后选择 "Account Settings"
+   - 在左侧菜单中，点击 "Security"
+   - 在 "Access Tokens" 部分，点击 "New Access Token"
+   - 给token起一个名字，选择适当的权限（至少需要"Read, Write, Delete"权限）
+   - 点击 "Generate" 并复制生成的token
+   - 将这个token作为 `DOCKERHUB_TOKEN` 的值添加到GitHub Secrets中
 
-5. Action将自动构建x86和ARM架构的Docker镜像，并推送到两个仓库，标签包括日期（格式为YYYYMMDD）和latest。
+4. 确保你的GitHub账户有权限推送到GitHub Container Registry。如果没有，你可能需要在个人设置中启用它。
 
-注意：如果你不想推送到Docker Hub，可以删除或注释掉GitHub Action文件中相关的步骤。
+5. 推送代码到main分支或创建一个pull request到main分支，这将触发GitHub Action。
+
+6. Action将自动构建x86和ARM架构的Docker镜像，并推送到配置的仓库，标签包括日期（格式为YYYYMMDD）和latest。
+
+注意：如果你没有设置Docker Hub凭证，Action将只推送到GitHub Container Registry。
 
 ## 使用说明
 
