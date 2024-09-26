@@ -29,7 +29,7 @@ RUN set -ex; \
     rm -rf openssl-1.1.1f openssl-1.1.1f.tar.gz && \
     echo "/usr/local/ssl/lib" > /etc/ld.so.conf.d/openssl-1.1.1f.conf && \
     ldconfig && \
-    pip install --no-cache-dir flask flask-limiter && \
+    pip install --no-cache-dir flask flask-limiter flask-babel && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
