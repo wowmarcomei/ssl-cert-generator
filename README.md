@@ -4,9 +4,10 @@
 
 ## 系统要求
 
-- Python 3.6+
+- Python 3.11+
 - Flask
-- OpenSSL 2.x
+- Flask-Limiter
+- OpenSSL 1.1.1f
 - Java（用于keytool命令）
 
 或者
@@ -18,6 +19,8 @@
 ```
 .
 ├── app.py
+├── config.py
+├── cert_generator.py
 ├── static/
 │   ├── styles.css
 │   └── script.js
@@ -25,11 +28,22 @@
 │   └── index.html
 ├── dist/  (自动创建)
 ├── Dockerfile
+├── test_cert_generator.py
 ├── .github/
 │   └── workflows/
 │       └── docker-build-push.yml
 └── README.md
 ```
+
+## 文件说明
+
+- `app.py`: 主应用文件，包含Flask路由和主要逻辑
+- `config.py`: 配置文件，包含应用程序的设置
+- `cert_generator.py`: 证书生成逻辑
+- `static/`: 静态文件目录
+- `templates/`: HTML模板目录
+- `dist/`: 生成的证书和密钥存储目录
+- `test_cert_generator.py`: 用于测试证书生成功能的脚本
 
 ## 本地安装和运行
 
@@ -38,18 +52,28 @@
 2. 安装所需的Python包：
 
    ```
-   pip install flask
+   pip install flask flask-limiter
    ```
 
-3. 确保系统中已安装OpenSSL 2.x和Java。
+3. 确保系统中已安装OpenSSL 1.1.1f和Java。
 
-4. 运行Flask应用：
+4. 设置环境变量（可选）：
+   ```
+   export DEBUG=True
+   export HOST=0.0.0.0
+   export PORT=5000
+   export CERT_OUTPUT_DIR=dist
+   export SECRET_KEY=your-secret-key-here
+   export KEYTOOL_PATH=/path/to/keytool  # 如果keytool不在默认路径
+   ```
+
+5. 运行Flask应用：
 
    ```
    python app.py
    ```
 
-5. 打开Web浏览器，访问 http://localhost:5000
+6. 打开Web浏览器，访问 http://localhost:5000
 
 ## 使用Docker
 
@@ -68,6 +92,22 @@
    ```
 
 3. 打开Web浏览器，访问 http://localhost:5000
+
+注意：Docker环境中已经配置了Java和keytool，无需额外设置。
+
+## 配置keytool路径
+
+默认情况下，应用程序会尝试使用系统PATH中的keytool。如果keytool不在默认路径或你想使用特定版本的keytool，可以通过以下方式设置：
+
+1. 在运行应用程序之前，设置KEYTOOL_PATH环境变量：
+   ```
+   export KEYTOOL_PATH=/path/to/your/keytool
+   ```
+
+2. 如果使用Docker，可以在运行容器时通过-e参数设置环境变量：
+   ```
+   docker run -p 5000:5000 -e KEYTOOL_PATH=/path/to/your/keytool ssl-cert-generator
+   ```
 
 ## GitHub Action 自动构建和推送
 
@@ -121,7 +161,7 @@
 
 - 这个系统生成的是自签名证书，不适用于生产环境。在实际使用中，你可能需要使用受信任的证书颁发机构（CA）签名的证书。
 - 确保在使用此系统时遵守相关的安全最佳实践，特别是在处理私钥和密码时。
-- 这个系统目前没有实现用户认证和授权，在生产环境中使用时应该添加这些安全措施。
+- 这个系统实现了基本的速率限制，但在生产环境中使用时可能需要更强大的安全措施，如用户认证和授权。
 
 ## 贡献
 

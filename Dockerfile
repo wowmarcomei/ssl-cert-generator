@@ -1,13 +1,13 @@
-# 使用官方Python运行时作为父镜像
-FROM python:3.9-slim-bullseye
+# Use the official Python runtime as the parent image
+FROM python:3.11-slim-bullseye
 
-# 设置工作目录
+# Set the working directory
 WORKDIR /app
 
-# 复制项目文件到工作目录
+# Copy the project files to the working directory
 COPY . /app
 
-# 安装项目依赖和工具，包括 OpenSSL 2.0.27
+# Install project dependencies and tools, including OpenSSL 1.1.1f and default-jdk
 RUN set -ex; \
     apt-get update && \
     apt-get upgrade -y && \
@@ -17,34 +17,40 @@ RUN set -ex; \
         wget \
         ca-certificates \
         default-jdk \
-        && \
-    wget https://www.openssl.org/source/openssl-2.0.27.tar.gz && \
-    tar -zxf openssl-2.0.27.tar.gz && \
-    cd openssl-2.0.27 && \
+        zlib1g-dev \
+    && \
+    wget https://www.openssl.org/source/old/1.1.1/openssl-1.1.1f.tar.gz && \
+    tar -zxf openssl-1.1.1f.tar.gz && \
+    cd openssl-1.1.1f && \
     ./config --prefix=/usr/local/ssl --openssldir=/usr/local/ssl shared zlib && \
     make && \
     make install && \
     cd .. && \
-    rm -rf openssl-2.0.27 openssl-2.0.27.tar.gz && \
-    echo "/usr/local/ssl/lib" > /etc/ld.so.conf.d/openssl-2.0.27.conf && \
+    rm -rf openssl-1.1.1f openssl-1.1.1f.tar.gz && \
+    echo "/usr/local/ssl/lib" > /etc/ld.so.conf.d/openssl-1.1.1f.conf && \
     ldconfig && \
-    pip install --no-cache-dir flask && \
+    pip install --no-cache-dir flask flask-limiter && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# 设置 OpenSSL 环境变量
+# Set OpenSSL environment variables
 ENV PATH="/usr/local/ssl/bin:${PATH}"
 ENV LD_LIBRARY_PATH="/usr/local/ssl/lib:${LD_LIBRARY_PATH}"
 
-# 创建dist目录
+# Set Java environment variables
+ENV JAVA_HOME="/usr/lib/jvm/default-java"
+ENV PATH="$JAVA_HOME/bin:${PATH}"
+
+# Create dist directory
 RUN mkdir -p /app/dist
 
-# 暴露端口5000供外部访问
+# Expose port 5000 for external access
 EXPOSE 5000
 
-# 定义环境变量
+# Define environment variables
 ENV FLASK_APP=app.py
 ENV FLASK_RUN_HOST=0.0.0.0
+ENV PYTHONUNBUFFERED=1
 
-# 运行应用
-CMD ["flask", "run"]
+# Run the application
+CMD ["python", "app.py"]
