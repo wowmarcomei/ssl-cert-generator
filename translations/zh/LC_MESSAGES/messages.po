@@ -1,0 +1,166 @@
+# Chinese translations for PROJECT.
+# Copyright (C) 2024 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2024-09-26 16:02+0800\n"
+"PO-Revision-Date: 2024-09-26 16:08+0800\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.16.0\n"
+
+#: app.py:43
+msgid "Missing required fields"
+msgstr "缺少必填字段"
+
+#: app.py:46
+msgid "Invalid country name. Must be 2 uppercase letters."
+msgstr "无效的国家名称。必须是2个大写字母。"
+
+#: app.py:49
+msgid "Invalid organization name"
+msgstr "无效的组织名称"
+
+#: app.py:52
+msgid "Invalid organizational unit name"
+msgstr "无效的组织单位名称"
+
+#: app.py:55
+msgid "Invalid root common name"
+msgstr "无效的根证书通用名称"
+
+#: app.py:58
+msgid "Invalid sub common name"
+msgstr "无效的子证书通用名称"
+
+#: app.py:63 app.py:65
+msgid "Invalid duration. Must be a positive integer not exceeding 3650 days."
+msgstr "无效的有效期。必须是不超过3650天的正整数。"
+
+#: app.py:68
+msgid "Password must be at least 8 characters long"
+msgstr "密码长度必须至少为8个字符"
+
+#: app.py:106
+msgid "Certificate generation failed. Please check your inputs and try again."
+msgstr "证书生成失败。请检查您的输入并重试。"
+
+#: app.py:109
+msgid "An unexpected error occurred. Please try again later."
+msgstr "发生意外错误。请稍后重试。"
+
+#: app.py:118
+msgid "File not found"
+msgstr "文件未找到"
+
+#: app.py:122
+msgid "An error occurred while downloading the file"
+msgstr "下载文件时发生错误"
+
+#: app.py:126
+msgid "Rate limit exceeded. Please try again later."
+msgstr "超出速率限制。请稍后重试。"
+
+#: templates/index.html:6 templates/index.html:11
+msgid "SSL Certificate Generator"
+msgstr "SSL证书生成器"
+
+#: templates/index.html:12
+msgid ""
+"This system can generate real SSL certificates. Please use it carefully "
+"and ensure you have permission to generate certificates for the specified"
+" domain."
+msgstr "该系统可以生成真实的SSL证书。请谨慎使用，并确保您有权为指定域名生成证书。"
+
+#: templates/index.html:15
+msgid "Country Code:"
+msgstr "国家代码："
+
+#: templates/index.html:18
+msgid "Two-letter country code (e.g., CN for China)"
+msgstr "两字母国家代码（例如：CN代表中国）"
+
+#: templates/index.html:23
+msgid "Organization Name:"
+msgstr "组织名称："
+
+#: templates/index.html:26
+msgid "Your organization name"
+msgstr "您的组织名称"
+
+#: templates/index.html:31
+msgid "Organizational Unit Name:"
+msgstr "组织单位名称："
+
+#: templates/index.html:34
+msgid "Your department or unit name"
+msgstr "您的部门或单位名称"
+
+#: templates/index.html:39
+msgid "Root Certificate Common Name:"
+msgstr "根证书通用名称："
+
+#: templates/index.html:42
+msgid "Common name for the root certificate"
+msgstr "根证书的通用名称"
+
+#: templates/index.html:47
+msgid "Sub Certificate Common Name:"
+msgstr "子证书通用名称："
+
+#: templates/index.html:50
+msgid "Common name for the sub certificate (usually your domain name)"
+msgstr "子证书的通用名称（通常是您的域名）"
+
+#: templates/index.html:55
+msgid "Password:"
+msgstr "密码："
+
+#: templates/index.html:58
+msgid "Password for keystore and truststore"
+msgstr "用于keystore和truststore的密码"
+
+#: templates/index.html:63
+msgid "Validity Period (days):"
+msgstr "有效期（天）："
+
+#: templates/index.html:66
+msgid "Validity period of the certificate (in days, maximum 3650 days)"
+msgstr "证书的有效期（以天为单位，最长3650天）"
+
+#: templates/index.html:71
+msgid "Upload Root Certificate (optional):"
+msgstr "上传根证书（可选）："
+
+#: templates/index.html:74
+msgid "If you have an existing root certificate, you can upload it"
+msgstr "如果您有现有的根证书，可以上传它"
+
+#: templates/index.html:79
+msgid "Upload Root Certificate Key (optional):"
+msgstr "上传根证书密钥（可选）："
+
+#: templates/index.html:82
+msgid ""
+"If you uploaded a root certificate, please also upload the corresponding "
+"key"
+msgstr "如果您上传了根证书，请同时上传对应的密钥"
+
+#: templates/index.html:86
+msgid "Generate Certificate"
+msgstr "生成证书"
+
+#: templates/index.html:90
+msgid "Generation Result:"
+msgstr "生成结果："
+
+# ... (rest of the content remains unchanged)

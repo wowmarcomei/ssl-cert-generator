@@ -1,77 +1,84 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="{{ get_locale() }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SSL Certificate Generator</title>
+    <title>{{ _('SSL Certificate Generator') }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
     <div class="container">
-        <h1>SSL Certificate Generator</h1>
-        <p>这个系统现在可以生成真实的SSL证书。请谨慎使用，并确保你有权限为指定的域名生成证书。</p>
-        <form id="certForm">
-            <div class="form-group">
-                <label for="countryName">国家代码：</label>
-                <input type="text" id="countryName" name="countryName" value="CN" required>
-                <span class="tooltip">?
-                    <span class="tooltiptext">两字母国家代码（例如：CN 代表中国）</span>
-                </span>
+        <div class="language-selector">
+            <select id="languageSelect" onchange="setLanguage(this.value)">
+                <option value="en" {% if get_locale() == 'en' %}selected{% endif %}>English</option>
+                <option value="zh" {% if get_locale() == 'zh' %}selected{% endif %}>中文</option>
+            </select>
+        </div>
+        <h1>{{ _('SSL Certificate Generator') }}</h1>
+        <p>{{ _('This system can generate real SSL certificates. Please use it carefully and ensure you have permission to generate certificates for the specified domain.') }}</p>
+        <form id="certForm" enctype="multipart/form-data">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="countryName">{{ _('Country Code') }} <span class="tooltip" data-tooltip="{{ _('Two-letter country code (e.g., CN for China)') }}">ⓘ</span></label>
+                    <input type="text" id="countryName" name="countryName" value="CN" required>
+                </div>
+                <div class="form-group">
+                    <label for="orgName">{{ _('Organization Name') }} <span class="tooltip" data-tooltip="{{ _('Your organization name') }}">ⓘ</span></label>
+                    <input type="text" id="orgName" name="orgName" value="Myweb" required>
+                </div>
             </div>
-
-            <div class="form-group">
-                <label for="orgName">组织名称：</label>
-                <input type="text" id="orgName" name="orgName" value="Myweb" required>
-                <span class="tooltip">?
-                    <span class="tooltiptext">你的组织名称</span>
-                </span>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="ouName">{{ _('Organizational Unit Name') }} <span class="tooltip" data-tooltip="{{ _('Your department or unit name') }}">ⓘ</span></label>
+                    <input type="text" id="ouName" name="ouName" value="Myweb Application" required>
+                </div>
+                <div class="form-group">
+                    <label for="cnRoot">{{ _('Root Certificate Common Name') }} <span class="tooltip" data-tooltip="{{ _('Common name for the root certificate') }}">ⓘ</span></label>
+                    <input type="text" id="cnRoot" name="cnRoot" value="Application" required>
+                </div>
             </div>
-
-            <div class="form-group">
-                <label for="ouName">组织单位名称：</label>
-                <input type="text" id="ouName" name="ouName" value="Myweb Application" required>
-                <span class="tooltip">?
-                    <span class="tooltiptext">你的部门或单位名称</span>
-                </span>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="cnSub">{{ _('Sub Certificate Common Name') }} <span class="tooltip" data-tooltip="{{ _('Common name for the sub certificate (usually your domain name)') }}">ⓘ</span></label>
+                    <input type="text" id="cnSub" name="cnSub" value="his-erp-lingqu.Mywebcloud.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">{{ _('Password') }} <span class="tooltip" data-tooltip="{{ _('Password for keystore and truststore') }}">ⓘ</span></label>
+                    <input type="password" id="password" name="password" value="changeit" required>
+                </div>
             </div>
-
-            <div class="form-group">
-                <label for="cnRoot">根证书通用名称：</label>
-                <input type="text" id="cnRoot" name="cnRoot" value="Application" required>
-                <span class="tooltip">?
-                    <span class="tooltiptext">根证书的通用名称</span>
-                </span>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="durationDays">{{ _('Validity Period (days)') }} <span class="tooltip" data-tooltip="{{ _('Validity period of the certificate (in days, maximum 3650 days)') }}">ⓘ</span></label>
+                    <input type="number" id="durationDays" name="durationDays" value="3650" required>
+                </div>
             </div>
-
-            <div class="form-group">
-                <label for="cnSub">子证书通用名称：</label>
-                <input type="text" id="cnSub" name="cnSub" value="his-erp-lingqu.Mywebcloud.com" required>
-                <span class="tooltip">?
-                    <span class="tooltiptext">子证书的通用名称（通常是你的域名）</span>
-                </span>
+            <div class="form-row">
+                <div class="form-group file-upload">
+                    <label for="root_cert">{{ _('Upload Root Certificate (optional)') }} <span class="tooltip" data-tooltip="{{ _('If you have an existing root certificate, you can upload it') }}">ⓘ</span></label>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="root_cert" name="root_cert">
+                        <span class="file-input-button"><i class="fas fa-upload"></i> {{ _('Choose File') }}</span>
+                    </div>
+                    <span class="file-name">{{ _('No file chosen') }}</span>
+                </div>
             </div>
-
-            <div class="form-group">
-                <label for="password">密码：</label>
-                <input type="password" id="password" name="password" value="changeit" required>
-                <span class="tooltip">?
-                    <span class="tooltiptext">用于keystore和truststore的密码</span>
-                </span>
+            <div class="form-row">
+                <div class="form-group file-upload">
+                    <label for="root_key">{{ _('Upload Root Certificate Key (optional)') }} <span class="tooltip" data-tooltip="{{ _('If you uploaded a root certificate, please also upload the corresponding key') }}">ⓘ</span></label>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="root_key" name="root_key">
+                        <span class="file-input-button"><i class="fas fa-upload"></i> {{ _('Choose File') }}</span>
+                    </div>
+                    <span class="file-name">{{ _('No file chosen') }}</span>
+                </div>
             </div>
-
-            <div class="form-group">
-                <label for="durationDays">有效期（天）：</label>
-                <input type="number" id="durationDays" name="durationDays" value="18250" required>
-                <span class="tooltip">?
-                    <span class="tooltiptext">证书的有效期（以天为单位）</span>
-                </span>
-            </div>
-
-            <input type="submit" value="生成证书">
+            <button type="submit" class="submit-btn">{{ _('Generate Certificate') }}</button>
         </form>
 
-        <div id="results">
-            <h2>生成结果：</h2>
+        <div id="results" style="display: none;">
+            <h2>{{ _('Generation Result:') }}</h2>
             <div id="resultContent"></div>
         </div>
     </div>

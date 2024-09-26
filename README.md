@@ -1,6 +1,6 @@
 # SSL 证书生成器
 
-这是一个基于Web的SSL证书生成器，可以创建自签名的根证书和子证书，以及相应的keystore和truststore文件。
+这是一个基于Web的SSL证书生成器，可以创建自签名的根证书和子证书，以及相应的keystore和truststore文件。现在支持上传现有的根证书和密钥。
 
 ## 系统要求
 
@@ -44,6 +44,12 @@
 - `templates/`: HTML模板目录
 - `dist/`: 生成的证书和密钥存储目录
 - `test_cert_generator.py`: 用于测试证书生成功能的脚本
+
+## 新功能
+
+- 支持上传现有的根证书和密钥文件
+- 可以为keystore和truststore设置自定义密码
+- 增加了更多的证书生成选项和灵活性
 
 ## 本地安装和运行
 
@@ -109,6 +115,16 @@
    docker run -p 5000:5000 -e KEYTOOL_PATH=/path/to/your/keytool ssl-cert-generator
    ```
 
+## 使用说明
+
+1. 访问Web界面，填写证书信息表单。
+2. 如果你有现有的根证书和密钥，可以在相应的字段上传这些文件。
+3. 设置证书的有效期（天数），最长为3650天。
+4. 为keystore和truststore设置密码。
+5. 点击"生成证书"按钮。
+6. 生成完成后，你将看到生成的文件列表、密码信息和下载链接。
+7. 所有生成的文件都保存在'dist'目录中。
+
 ## GitHub Action 自动构建和推送
 
 本项目包含一个GitHub Action，可以自动构建多平台Docker镜像并推送到GitHub Container Registry和Docker Hub。
@@ -139,14 +155,6 @@
 6. Action将自动构建x86和ARM架构的Docker镜像，并推送到配置的仓库，标签包括日期（格式为YYYYMMDD）和latest。
 
 注意：如果你没有设置Docker Hub凭证，Action将只推送到GitHub Container Registry。
-
-## 使用说明
-
-1. 填写表单并点击"生成证书"按钮。
-
-2. 生成完成后，你将看到生成的文件列表和下载链接。
-
-3. 所有生成的文件都保存在'dist'目录中。
 
 ## 错误处理
 

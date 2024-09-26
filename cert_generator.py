@@ -2,6 +2,8 @@ import os
 import subprocess
 import logging
 import shutil
+import random
+import string
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +18,10 @@ def run_command(command):
         logger.error(f"Error output: {e.stderr}")
         raise
 
+def generate_random_name():
+    random_bytes = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
+    return f"alias_{random_bytes}"
+
 def generate_certificate(data, cert_output_dir, keytool_path=None):
     try:
         # Clean up the output directory
@@ -28,6 +34,14 @@ def generate_certificate(data, cert_output_dir, keytool_path=None):
                     shutil.rmtree(file_path)
             except Exception as e:
                 logger.error(f'Failed to delete {file_path}. Reason: {e}')
+
+        # Define file names
+        root_crt = data.get('root_crt', 'root.crt')
+        root_key = data.get('root_key', 'root.key')
+        sub_crt = "his-ssl-cert.crt"
+        sub_key = "his-ssl-cert.key"
+        keystore = 'his-server-keystore.pfx'
+        truststore = 'his-cacerts.jks'
 
         # Create configuration files
         root_cnf_path = os.path.join(cert_output_dir, 'root.cnf')
@@ -78,49 +92,57 @@ DNS.1 = *.{data['cnSub']}
 DNS.2 = {data['cnSub']}
             """)
 
-        # Generate root certificate
-        run_command(['openssl', 'req', '-x509', '-newkey', 'rsa:4096', '-sha256', '-days', str(data['durationDays']),
-                    '-keyout', os.path.join(cert_output_dir, 'root.key'), 
-                    '-out', os.path.join(cert_output_dir, 'root.crt'), 
-                    '-config', root_cnf_path, '-nodes'])
+        result = {}
+
+        # Generate root certificate if not provided
+        if not data.get('existing_root_cert'):
+            run_command(['openssl', 'req', '-x509', '-newkey', 'rsa:4096', '-sha256', '-days', str(data['durationDays']),
+                        '-keyout', os.path.join(cert_output_dir, root_key), 
+                        '-out', os.path.join(cert_output_dir, root_crt), 
+                        '-config', root_cnf_path, '-nodes'])
+            result['root_crt'] = root_crt
+            result['root_key'] = root_key
 
         # Generate sub certificate
         run_command(['openssl', 'req', '-new', '-newkey', 'rsa:3072', 
-                    '-keyout', os.path.join(cert_output_dir, 'his-ssl-cert.key'), 
+                    '-keyout', os.path.join(cert_output_dir, sub_key), 
                     '-out', os.path.join(cert_output_dir, 'sub.csr'),
                     '-config', sub_cnf_path, '-nodes'])
         run_command(['openssl', 'x509', '-req', 
                     '-in', os.path.join(cert_output_dir, 'sub.csr'), 
-                    '-CA', os.path.join(cert_output_dir, 'root.crt'), 
-                    '-CAkey', os.path.join(cert_output_dir, 'root.key'),
+                    '-CA', os.path.join(cert_output_dir, root_crt), 
+                    '-CAkey', os.path.join(cert_output_dir, root_key),
                     '-CAcreateserial', 
-                    '-out', os.path.join(cert_output_dir, 'his-ssl-cert.crt'), 
+                    '-out', os.path.join(cert_output_dir, sub_crt), 
                     '-days', str(data['durationDays']),
                     '-extfile', sub_cnf_path, '-extensions', 'v3_sub'])
+        
+        result['sub_crt'] = sub_crt
+        result['sub_key'] = sub_key
 
         # Generate Keystore
+        alias_name = generate_random_name()
+        keystore_password = data.get('keystore_password', ''.join(random.choices(string.ascii_letters + string.digits, k=12)))
         run_command(['openssl', 'pkcs12', '-export', 
-                    '-in', os.path.join(cert_output_dir, 'his-ssl-cert.crt'), 
-                    '-inkey', os.path.join(cert_output_dir, 'his-ssl-cert.key'),
-                    '-out', os.path.join(cert_output_dir, 'his-server-keystore.pfx'), 
-                    '-name', 'alias', '-passout', f'pass:{data["password"]}'])
-
-        result = {
-            'root_crt': 'root.crt',
-            'root_key': 'root.key',
-            'sub_crt': 'his-ssl-cert.crt',
-            'sub_key': 'his-ssl-cert.key',
-            'keystore': 'his-server-keystore.pfx'
-        }
+                    '-in', os.path.join(cert_output_dir, sub_crt), 
+                    '-inkey', os.path.join(cert_output_dir, sub_key),
+                    '-out', os.path.join(cert_output_dir, keystore), 
+                    '-name', alias_name, '-passout', f'pass:{keystore_password}'])
+        
+        result['keystore'] = keystore
+        result['keystore_password'] = keystore_password
+        result['keystore_alias'] = alias_name
 
         # Generate Truststore if keytool is available
         if keytool_path:
             try:
-                run_command([keytool_path, '-import', '-alias', 'alias', 
-                            '-file', os.path.join(cert_output_dir, 'root.crt'), 
-                            '-keystore', os.path.join(cert_output_dir, 'his-cacerts.jks'),
+                run_command([keytool_path, '-import', '-alias', alias_name, 
+                            '-file', os.path.join(cert_output_dir, root_crt), 
+                            '-keystore', os.path.join(cert_output_dir, truststore),
                             '-storepass', data['password'], '-noprompt'])
-                result['truststore'] = 'his-cacerts.jks'
+                result['truststore'] = truststore
+                result['truststore_password'] = data['password']
+                result['truststore_alias'] = alias_name
             except Exception as e:
                 logger.warning(f"Failed to generate truststore: {str(e)}")
         else:
