@@ -60,7 +60,7 @@
                     <label for="root_cert">{{ _('Upload Root Certificate (optional)') }} <span class="tooltip" data-tooltip="{{ _('If you have an existing root certificate, you can upload it') }}">ⓘ</span></label>
                     <div class="file-input-wrapper">
                         <input type="file" id="root_cert" name="root_cert">
-                        <span class="file-input-button"><i class="fas fa-upload"></i> {{ _('Choose File') }}</span>
+                        <button type="button" class="file-input-button"><i class="fas fa-upload"></i> {{ _('Choose File') }}</button>
                     </div>
                     <span class="file-name">{{ _('No file chosen') }}</span>
                 </div>
@@ -70,7 +70,7 @@
                     <label for="root_key">{{ _('Upload Root Certificate Key (optional)') }} <span class="tooltip" data-tooltip="{{ _('If you uploaded a root certificate, please also upload the corresponding key') }}">ⓘ</span></label>
                     <div class="file-input-wrapper">
                         <input type="file" id="root_key" name="root_key">
-                        <span class="file-input-button"><i class="fas fa-upload"></i> {{ _('Choose File') }}</span>
+                        <button type="button" class="file-input-button"><i class="fas fa-upload"></i> {{ _('Choose File') }}</button>
                     </div>
                     <span class="file-name">{{ _('No file chosen') }}</span>
                 </div>

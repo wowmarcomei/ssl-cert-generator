@@ -89,23 +89,50 @@ input[type="number"] {
     overflow: hidden;
     display: inline-block;
     width: 100%;
+    transition: all 0.3s ease;
+}
+
+.file-input-wrapper:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .file-input-button {
     display: inline-block;
-    padding: 8px 12px;
-    background-color: #e5e7eb;
-    color: #374151;
-    border: 1px solid #d1d5db;
+    width: 100%;
+    padding: 10px;
+    background-color: #9ca3af;  /* 默认灰色 */
+    color: white;
+    border: none;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 16px;
     text-align: center;
-    width: 100%;
+    transition: all 0.3s ease;
 }
 
-.file-input-button:hover {
-    background-color: #d1d5db;
+.file-input-wrapper:hover .file-input-button {
+    background-color: #6b7280;  /* 悬停时的深灰色 */
+}
+
+.submit-btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #10b981;  /* 绿色 */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+    transition: all 0.3s ease;
+}
+
+.submit-btn:hover {
+    background-color: #059669;  /* 深绿色 */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .file-input-wrapper input[type="file"] {
@@ -120,9 +147,16 @@ input[type="number"] {
 }
 
 .file-name {
-    margin-left: 10px;
+    display: inline-block;
+    margin-top: 10px;
     font-size: 14px;
     color: #6b7280;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.file-name.has-file {
+    color: #10b981;
 }
 
 .tooltip {
@@ -154,23 +188,6 @@ input[type="number"] {
 .tooltip:hover::after {
     visibility: visible;
     opacity: 1;
-}
-
-.submit-btn {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    background-color: #10b981;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-top: 20px;
-}
-
-.submit-btn:hover {
-    background-color: #059669;
 }
 
 #results {

@@ -143,8 +143,12 @@ document.addEventListener('DOMContentLoaded', function() {
             input.addEventListener('change', function() {
                 if (this.files.length > 0) {
                     fileNameSpan.textContent = this.files[0].name;
+                    fileNameSpan.classList.add('has-file');
+                    button.classList.add('file-selected');
                 } else {
                     fileNameSpan.textContent = gettext('No file chosen');
+                    fileNameSpan.classList.remove('has-file');
+                    button.classList.remove('file-selected');
                 }
             });
 
