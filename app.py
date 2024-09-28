@@ -30,8 +30,24 @@ logger = logging.getLogger(__name__)
 if not os.path.exists(app.config['CERT_OUTPUT_DIR']):
     os.makedirs(app.config['CERT_OUTPUT_DIR'])
 
+def validate_keytool_path(path):
+    if os.path.isfile(path) and os.access(path, os.X_OK):
+        return path
+    return None
+
 # Get keytool path from environment variable or use default
-KEYTOOL_PATH = os.environ.get('KEYTOOL_PATH', '/usr/bin/keytool')
+KEYTOOL_PATH = os.environ.get('KEYTOOL_PATH')
+if not KEYTOOL_PATH:
+    KEYTOOL_PATH = shutil.which('keytool')
+
+if KEYTOOL_PATH:
+    KEYTOOL_PATH = validate_keytool_path(KEYTOOL_PATH)
+    if KEYTOOL_PATH:
+        logger.info(f"Keytool found at: {KEYTOOL_PATH}")
+    else:
+        logger.warning("Keytool path is invalid.")
+else:
+    logger.warning("Keytool not found. Truststore generation will be skipped.")
 
 def get_locale():
     if 'language' in session:
@@ -135,16 +151,18 @@ def generate():
         if 'root_cert' in request.files:
             root_cert = request.files['root_cert']
             if root_cert.filename != '':
-                root_cert_path = os.path.join(app.config['CERT_OUTPUT_DIR'], secure_filename(root_cert.filename))
+                root_cert_path = os.path.join(app.config['CERT_OUTPUT_DIR'], 'root.crt')
                 root_cert.save(root_cert_path)
                 data['existing_root_cert'] = root_cert_path
+                logger.info(f"Root certificate saved to: {root_cert_path}")
 
         if 'root_key' in request.files:
             root_key = request.files['root_key']
             if root_key.filename != '':
-                root_key_path = os.path.join(app.config['CERT_OUTPUT_DIR'], secure_filename(root_key.filename))
+                root_key_path = os.path.join(app.config['CERT_OUTPUT_DIR'], 'root.key')
                 root_key.save(root_key_path)
                 data['existing_root_key'] = root_key_path
+                logger.info(f"Root key saved to: {root_key_path}")
 
         # Convert durationDays to int after validation
         data['durationDays'] = int(data['durationDays'])

@@ -36,12 +36,16 @@ def generate_certificate(data, cert_output_dir, keytool_path=None):
                 logger.error(f'Failed to delete {file_path}. Reason: {e}')
 
         # Define file names
-        root_crt = data.get('root_crt', 'root.crt')
-        root_key = data.get('root_key', 'root.key')
+        root_crt = 'root.crt'
+        root_key = 'root.key'
         sub_crt = "his-ssl-cert.crt"
         sub_key = "his-ssl-cert.key"
         keystore = 'his-server-keystore.pfx'
         truststore = 'his-cacerts.jks'
+
+        # Log the existence of root certificate and key
+        logger.info(f"Checking for existing root certificate: {os.path.exists(os.path.join(cert_output_dir, root_crt))}")
+        logger.info(f"Checking for existing root key: {os.path.exists(os.path.join(cert_output_dir, root_key))}")
 
         # Create configuration files
         root_cnf_path = os.path.join(cert_output_dir, 'root.cnf')
@@ -95,15 +99,21 @@ DNS.2 = {data['cnSub']}
         result = {}
 
         # Generate root certificate if not provided
-        if not data.get('existing_root_cert'):
+        if not os.path.exists(os.path.join(cert_output_dir, root_crt)) or not os.path.exists(os.path.join(cert_output_dir, root_key)):
+            logger.info("Generating new root certificate and key")
             run_command(['openssl', 'req', '-x509', '-newkey', 'rsa:4096', '-sha256', '-days', str(data['durationDays']),
                         '-keyout', os.path.join(cert_output_dir, root_key), 
                         '-out', os.path.join(cert_output_dir, root_crt), 
                         '-config', root_cnf_path, '-nodes'])
             result['root_crt'] = root_crt
             result['root_key'] = root_key
+        else:
+            logger.info("Using existing root certificate and key")
+            result['root_crt'] = root_crt
+            result['root_key'] = root_key
 
         # Generate sub certificate
+        logger.info("Generating sub certificate")
         run_command(['openssl', 'req', '-new', '-newkey', 'rsa:3072', 
                     '-keyout', os.path.join(cert_output_dir, sub_key), 
                     '-out', os.path.join(cert_output_dir, 'sub.csr'),
@@ -121,6 +131,7 @@ DNS.2 = {data['cnSub']}
         result['sub_key'] = sub_key
 
         # Generate Keystore
+        logger.info("Generating Keystore")
         alias_name = generate_random_name()
         keystore_password = data.get('keystore_password', ''.join(random.choices(string.ascii_letters + string.digits, k=12)))
         run_command(['openssl', 'pkcs12', '-export', 
@@ -135,16 +146,33 @@ DNS.2 = {data['cnSub']}
 
         # Generate Truststore if keytool is available
         if keytool_path:
+            if not os.path.isfile(keytool_path):
+                logger.error(f"Keytool not found at specified path: {keytool_path}")
+                raise FileNotFoundError(f"Keytool not found at: {keytool_path}")
+            
+            root_crt_path = os.path.join(cert_output_dir, root_crt)
+            if not os.path.isfile(root_crt_path):
+                logger.error(f"Root certificate not found at: {root_crt_path}")
+                raise FileNotFoundError(f"Root certificate not found at: {root_crt_path}")
+            
+            logger.info("Generating Truststore")
+            truststore_path = os.path.join(cert_output_dir, truststore)
+            keytool_command = [
+                keytool_path, '-import', '-alias', alias_name,
+                '-file', root_crt_path,
+                '-keystore', truststore_path,
+                '-storepass', data['password'], '-noprompt'
+            ]
+            
             try:
-                run_command([keytool_path, '-import', '-alias', alias_name, 
-                            '-file', os.path.join(cert_output_dir, root_crt), 
-                            '-keystore', os.path.join(cert_output_dir, truststore),
-                            '-storepass', data['password'], '-noprompt'])
+                run_command(keytool_command)
                 result['truststore'] = truststore
                 result['truststore_password'] = data['password']
                 result['truststore_alias'] = alias_name
-            except Exception as e:
-                logger.warning(f"Failed to generate truststore: {str(e)}")
+            except subprocess.CalledProcessError as e:
+                logger.error(f"Failed to generate truststore. Command: {' '.join(keytool_command)}")
+                logger.error(f"Error: {str(e)}")
+                raise
         else:
             logger.warning("Keytool path not provided. Skipping truststore generation.")
 
