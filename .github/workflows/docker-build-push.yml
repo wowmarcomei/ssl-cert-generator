@@ -2,9 +2,7 @@ name: Docker Build and Push
 
 on:
   push:
-    branches: [ "master" ]  # 触发器，当推送到master分支时
-  pull_request:
-    branches: [ "master" ]  # 也可以在PR时触发
+    
 
 jobs:
   build-and-push:

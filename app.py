@@ -1,7 +1,10 @@
 import os
 import subprocess
 import logging
+from datetime import datetime
 import shutil
+import zipfile
+import tempfile
 from flask import Flask, request, jsonify, send_file, render_template, g, session
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -66,6 +69,8 @@ def get_translations():
         'Validity period of the certificate (in days, maximum 3650 days)': _('Validity period of the certificate (in days, maximum 3650 days)'),
         'If you have an existing root certificate, you can upload it': _('If you have an existing root certificate, you can upload it'),
         'If you uploaded a root certificate, please also upload the corresponding key': _('If you uploaded a root certificate, please also upload the corresponding key'),
+        'Download Log': _('Download Log'),
+        'Download All Files': _('Download All Files'),
     }
     return jsonify(translations)
 
@@ -100,6 +105,21 @@ def validate_input(data):
     if len(data['password']) < 8:
         raise ValueError(_("Password must be at least 8 characters long"))
 
+def save_log(log_content):
+    """Save log content to a file in Markdown format"""
+    log_filename = f"cert_generation_log_{datetime.now().strftime('%Y%m%d_%H%M%S')}.md"
+    log_path = os.path.join(app.config['CERT_OUTPUT_DIR'], log_filename)
+    with open(log_path, 'w') as log_file:
+        log_file.write(f"# Certificate Generation Log\n\n")
+        log_file.write(f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+        log_file.write("## Input Data\n\n")
+        for key, value in log_content['input_data'].items():
+            log_file.write(f"- **{key}**: {value}\n")
+        log_file.write("\n## Generated Files\n\n")
+        for key, value in log_content['generated_files'].items():
+            log_file.write(f"- **{key}**: {value}\n")
+    return log_filename
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -130,6 +150,15 @@ def generate():
         data['durationDays'] = int(data['durationDays'])
         
         files = generate_certificate(data, app.config['CERT_OUTPUT_DIR'], KEYTOOL_PATH)
+        
+        # Generate and save log
+        log_content = {
+            'input_data': data,
+            'generated_files': files
+        }
+        log_filename = save_log(log_content)
+        
+        files['log'] = log_filename
         return jsonify({'success': True, 'data': files}), 200
     except ValueError as ve:
         logger.warning(f"Input validation error: {str(ve)}")
@@ -153,6 +182,26 @@ def download(filename):
     except Exception as e:
         logger.exception(f"Error downloading file: {filename}")
         return jsonify({'success': False, 'error': _('An error occurred while downloading the file')}), 500
+
+@app.route('/download_all', methods=['POST'])
+@limiter.limit("10 per minute")
+def download_all():
+    try:
+        files = request.json.get('files', [])
+        if not files:
+            return jsonify({'success': False, 'error': _('No files to download')}), 400
+
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.zip') as temp_file:
+            with zipfile.ZipFile(temp_file, 'w') as zipf:
+                for filename in files:
+                    file_path = os.path.join(app.config['CERT_OUTPUT_DIR'], filename)
+                    if os.path.exists(file_path):
+                        zipf.write(file_path, filename)
+
+        return send_file(temp_file.name, as_attachment=True, download_name='all_certificates.zip')
+    except Exception as e:
+        logger.exception("Error creating zip file")
+        return jsonify({'success': False, 'error': _('An error occurred while creating the zip file')}), 500
 
 @app.errorhandler(429)
 def ratelimit_handler(e):

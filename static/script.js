@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('certForm');
     const resultsDiv = document.getElementById('results');
     const resultContent = document.getElementById('resultContent');
+    const downloadButtons = document.getElementById('downloadButtons');
     const fileInputs = document.querySelectorAll('input[type="file"]');
     const languageSelect = document.getElementById('languageSelect');
 
@@ -24,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             resultContent.innerHTML = gettext('Generating certificate, please wait...');
             resultsDiv.style.display = 'block';
+            downloadButtons.innerHTML = '';
 
             fetch('/generate', {
                 method: 'POST',
@@ -79,18 +81,54 @@ document.addEventListener('DOMContentLoaded', function() {
         let resultText = gettext("Certificate generation successful!") + "\n\n";
         resultText += gettext("Generated files:") + "\n";
         
-        let downloadLinks = '';
+        let allFiles = [];
         for (const [key, value] of Object.entries(result)) {
             if (key.endsWith('_password') || key.endsWith('_alias')) {
                 resultText += `${key}: ${value}\n`;
             } else {
                 resultText += `${key}: ${value}\n`;
-                downloadLinks += `<a href="/download/${value}" download="${value}">${gettext('Download')} ${value}</a><br>`;
+                allFiles.push(value);
             }
         }
 
-        resultContent.innerHTML = `<pre>${resultText}</pre>${downloadLinks}`;
+        resultContent.innerHTML = `<pre>${resultText}</pre>`;
+        downloadButtons.innerHTML = `<a href="#" id="downloadAllBtn" class="download-btn download-all-btn">${gettext('Download All Files')}</a>`;
         resultsDiv.style.display = 'block';
+
+        document.getElementById('downloadAllBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            downloadAllFiles(allFiles);
+        });
+    }
+
+    function downloadAllFiles(files) {
+        fetch('/download_all', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ files: files }),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.blob();
+        })
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = 'all_certificates.zip';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert(gettext('An error occurred while downloading the files.'));
+        });
     }
 
     function updateFileInputs() {
