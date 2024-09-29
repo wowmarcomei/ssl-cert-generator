@@ -128,7 +128,7 @@ We now use a two-stage build process to optimize Docker image building. If you w
 3. Run the Docker container:
 
    ```
-   docker run -p 5000:5000 ssl-cert-generator:latest
+   docker run -d -p 5000:5000 ssl-cert-generator:latest
    ```
 
    If you want to set default values for the certificates, you can use environment variables:
@@ -143,6 +143,24 @@ We now use a two-stage build process to optimize Docker image building. If you w
      -e DEFAULT_PASSWORD=mysecretpassword \
      -e DEFAULT_DURATION_DAYS=365 \
      ssl-cert-generator:latest
+   ```
+
+   If you want to use my own image, you can use it in the way of below:
+   
+   ```
+   #use default value
+   docker run -d -p 5000:5000 wowmarcomei/ssl-cert-generator:latest
+
+   #specify default value by your own
+   docker run -d -p 5000:5000 \
+     -e DEFAULT_COUNTRY_CODE=CN \
+     -e DEFAULT_ORG_NAME=MyOrganization \
+     -e DEFAULT_OU_NAME="IT Department" \
+     -e DEFAULT_ROOT_CN="My Root CA" \
+     -e DEFAULT_SUB_CN=example.com \
+     -e DEFAULT_PASSWORD=mysecretpassword \
+     -e DEFAULT_DURATION_DAYS=365 \
+     wowmarcomei/ssl-cert-generator:latest
    ```
 
 4. Open a web browser and visit http://localhost:5000

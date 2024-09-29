@@ -128,13 +128,13 @@
 3. 运行Docker容器：
 
    ```
-   docker run -p 5000:5000 ssl-cert-generator:latest
+   docker run -d -p 5000:5000 ssl-cert-generator:latest
    ```
 
    如果你想设置证书的默认值，可以使用环境变量：
 
    ```
-   docker run -p 5000:5000 \
+   docker run -d -p 5000:5000 \
      -e DEFAULT_COUNTRY_CODE=US \
      -e DEFAULT_ORG_NAME=MyOrganization \
      -e DEFAULT_OU_NAME="IT Department" \
@@ -143,6 +143,24 @@
      -e DEFAULT_PASSWORD=mysecretpassword \
      -e DEFAULT_DURATION_DAYS=365 \
      ssl-cert-generator:latest
+   ```
+
+   如果使用我编译好的镜像，可改为：
+
+   ```
+   #使用默认参数
+   docker run -d -p 5000:5000 wowmarcomei/ssl-cert-generator:latest
+
+   #使用指定参数
+   docker run -d -p 5000:5000 \
+     -e DEFAULT_COUNTRY_CODE=CN \
+     -e DEFAULT_ORG_NAME=MyOrganization \
+     -e DEFAULT_OU_NAME="IT Department" \
+     -e DEFAULT_ROOT_CN="My Root CA" \
+     -e DEFAULT_SUB_CN=example.com \
+     -e DEFAULT_PASSWORD=mysecretpassword \
+     -e DEFAULT_DURATION_DAYS=365 \
+     wowmarcomei/ssl-cert-generator:latest
    ```
 
 4. 打开Web浏览器，访问 http://localhost:5000
