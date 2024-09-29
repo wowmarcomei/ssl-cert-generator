@@ -82,72 +82,72 @@ msgid ""
 msgstr "该系统可以生成真实的SSL证书。请谨慎使用，并确保您有权为指定域名生成证书。"
 
 #: templates/index.html:15
-msgid "Country Code:"
-msgstr "国家代码："
+msgid "Country Code"
+msgstr "国家代码"
 
 #: templates/index.html:18
 msgid "Two-letter country code (e.g., CN for China)"
 msgstr "两字母国家代码（例如：CN代表中国）"
 
 #: templates/index.html:23
-msgid "Organization Name:"
-msgstr "组织名称："
+msgid "Organization Name"
+msgstr "组织名称"
 
 #: templates/index.html:26
 msgid "Your organization name"
 msgstr "您的组织名称"
 
 #: templates/index.html:31
-msgid "Organizational Unit Name:"
-msgstr "组织单位名称："
+msgid "Organizational Unit Name"
+msgstr "组织单位名称"
 
 #: templates/index.html:34
 msgid "Your department or unit name"
 msgstr "您的部门或单位名称"
 
 #: templates/index.html:39
-msgid "Root Certificate Common Name:"
-msgstr "根证书通用名称："
+msgid "Root Certificate Common Name"
+msgstr "根证书通用名称"
 
 #: templates/index.html:42
 msgid "Common name for the root certificate"
 msgstr "根证书的通用名称"
 
 #: templates/index.html:47
-msgid "Sub Certificate Common Name:"
-msgstr "子证书通用名称："
+msgid "Sub Certificate Common Name"
+msgstr "子证书通用名称"
 
 #: templates/index.html:50
 msgid "Common name for the sub certificate (usually your domain name)"
 msgstr "子证书的通用名称（通常是您的域名）"
 
 #: templates/index.html:55
-msgid "Password:"
-msgstr "密码："
+msgid "Password"
+msgstr "密码"
 
 #: templates/index.html:58
 msgid "Password for keystore and truststore"
 msgstr "用于keystore和truststore的密码"
 
 #: templates/index.html:63
-msgid "Validity Period (days):"
-msgstr "有效期（天）："
+msgid "Validity Period (days)"
+msgstr "有效期（天）"
 
 #: templates/index.html:66
 msgid "Validity period of the certificate (in days, maximum 3650 days)"
 msgstr "证书的有效期（以天为单位，最长3650天）"
 
 #: templates/index.html:71
-msgid "Upload Root Certificate (optional):"
-msgstr "上传根证书（可选）："
+msgid "Upload Root Certificate (optional)"
+msgstr "上传根证书（可选）"
 
 #: templates/index.html:74
 msgid "If you have an existing root certificate, you can upload it"
 msgstr "如果您有现有的根证书，可以上传它"
 
 #: templates/index.html:79
-msgid "Upload Root Certificate Key (optional):"
-msgstr "上传根证书密钥（可选）："
+msgid "Upload Root Certificate Key (optional)"
+msgstr "上传根证书密钥（可选）"
 
 #: templates/index.html:82
 msgid ""
@@ -163,4 +163,17 @@ msgstr "生成证书"
 msgid "Generation Result:"
 msgstr "生成结果："
 
-# ... (rest of the content remains unchanged)
+msgid "English"
+msgstr "英语"
+
+msgid "中文"
+msgstr "中文"
+
+msgid "Choose File"
+msgstr "选择文件"
+
+msgid "No file chosen"
+msgstr "未选择文件"
+
+msgid "Select Language"
+msgstr "选择语言"

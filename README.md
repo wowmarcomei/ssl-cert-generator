@@ -31,6 +31,16 @@
 ├── Dockerfile
 ├── Dockerfile.base
 ├── test_cert_generator.py
+├── compile_translations.py
+├── translations/
+│   ├── en/
+│   │   └── LC_MESSAGES/
+│   │       ├── messages.po
+│   │       └── messages.mo
+│   └── zh/
+│       └── LC_MESSAGES/
+│           ├── messages.po
+│           └── messages.mo
 ├── .github/
 │   └── workflows/
 │       ├── build-base-image.yml
@@ -49,6 +59,8 @@
 - `Dockerfile`: 用于构建应用镜像的Dockerfile
 - `Dockerfile.base`: 用于构建基础镜像的Dockerfile
 - `test_cert_generator.py`: 用于测试证书生成功能的脚本
+- `compile_translations.py`: 用于编译翻译文件的脚本
+- `translations/`: 包含不同语言的翻译文件
 
 ## 新功能
 
@@ -56,6 +68,7 @@
 - 可以为keystore和truststore设置自定义密码
 - 增加了更多的证书生成选项和灵活性
 - 优化的Docker构建过程，使用基础镜像加速构建
+- 支持多语言（目前支持英语和中文）
 
 ## 本地安装和运行
 
@@ -79,13 +92,19 @@
    export KEYTOOL_PATH=/path/to/keytool  # 如果keytool不在默认路径
    ```
 
-5. 运行Flask应用：
+5. 编译翻译文件：
+
+   ```
+   python compile_translations.py
+   ```
+
+6. 运行Flask应用：
 
    ```
    python app.py
    ```
 
-6. 打开Web浏览器，访问 http://localhost:5000
+7. 打开Web浏览器，访问 http://localhost:5000
 
 ## 使用Docker
 
@@ -127,6 +146,29 @@
    docker run -p 5000:5000 -e KEYTOOL_PATH=/path/to/your/keytool ssl-cert-generator:latest
    ```
 
+## 翻译
+
+本项目支持多语言，目前包括英语和中文。翻译文件位于 `translations/` 目录下。
+
+### 添加新的翻译
+
+1. 在 `translations/` 目录下为新语言创建一个子目录，例如 `translations/fr/` 用于法语。
+2. 在新创建的语言目录中创建 `LC_MESSAGES/` 子目录。
+3. 复制 `messages.po` 文件到新的 `LC_MESSAGES/` 目录中。
+4. 编辑 `messages.po` 文件，添加新语言的翻译。
+
+### 编译翻译文件
+
+在对翻译文件进行更改后，需要编译它们以生成 `.mo` 文件。可以通过以下方式编译翻译：
+
+1. 在本地开发环境中：
+   ```
+   python compile_translations.py
+   ```
+
+2. 在 Docker 构建过程中：
+   翻译文件会在 Docker 镜像构建过程中自动编译。无需手动操作。
+
 ## 使用说明
 
 1. 访问Web界面，填写证书信息表单。
@@ -144,6 +186,9 @@
 1. `build-base-image.yml`: 构建和推送基础镜像
    - 触发条件：当 Dockerfile.base 文件发生变化时，或手动触发
    - 作用：构建并推送基础镜像
+   - 标签：
+     - latest
+     - 日期标签（格式：YYYYMMDD，例如 20240929）
 
 2. `build-app-image.yml`: 构建和推送应用镜像
    - 触发条件：
@@ -152,8 +197,11 @@
      c) 当创建 pull request 到 master 分支时
      d) 手动触发
    - 作用：构建并推送应用镜像，使用最新的基础镜像
+   - 标签：
+     - latest
+     - 日期标签（格式：YYYYMMDD，例如 20240929）
 
-这种设置确保了应用镜像总是基于最新的基础镜像构建，同时也允许在基础镜像没有变化的情况下独立更新应用镜像。
+这种设置确保了应用镜像总是基于最新的基础镜像构建，同时也允许在基础镜像没有变化的情况下独立更新应用镜像。使用日期标签可以方便地追踪不同版本的镜像。
 
 ### 设置步骤
 

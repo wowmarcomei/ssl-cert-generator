@@ -12,8 +12,8 @@
         <div class="language-selector">
             <label for="languageSelect" class="visually-hidden">{{ _('Select Language') }}</label>
             <select id="languageSelect" onchange="setLanguage(this.value)">
-                <option value="en" {% if get_locale() == 'en' %}selected{% endif %}>English</option>
-                <option value="zh" {% if get_locale() == 'zh' %}selected{% endif %}>中文</option>
+                <option value="en" {% if get_locale() == 'en' %}selected{% endif %}>{{ _('English') }}</option>
+                <option value="zh" {% if get_locale() == 'zh' %}selected{% endif %}>{{ _('中文') }}</option>
             </select>
         </div>
         <h1>{{ _('SSL Certificate Generator') }}</h1>
