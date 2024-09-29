@@ -93,7 +93,26 @@ subjectAltName = @alt_names
 
 [ alt_names ]
 DNS.1 = *.{data['cnSub']}
-DNS.2 = {data['cnSub']}
+DNS.2 = *.datafabric.svc.cluster.local
+DNS.3 = *.headless-datafabric.datafabric.svc.cluster.local
+DNS.4 = *.datafabric
+DNS.5 = *.headless-datafabric.datafabric
+DNS.6 = *.tenant-eureka.his-iam.svc.cluster.local
+DNS.7 = *.gaia
+DNS.8 = *.gaia-log
+DNS.9 = *.gaia-monitoring
+DNS.10 = *.his-iam
+DNS.11 = *.his-observe
+DNS.12 = *.jalor
+DNS.13 = *.liveflow
+DNS.14 = *.livefunction
+DNS.15 = *.liveconnector
+DNS.16 = *.monitoring
+DNS.17 = *.starling
+DNS.18 = *.flashsync
+DNS.19 = *.csb
+DNS.20 = *.edm
+DNS.21 = *.bds
             """)
 
         result = {}
