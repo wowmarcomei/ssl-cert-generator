@@ -22,37 +22,37 @@
             <div class="form-row">
                 <div class="form-group">
                     <label for="countryName">{{ _('Country Code') }} <span class="tooltip" data-tooltip="{{ _('Two-letter country code (e.g., CN for China)') }}">ⓘ</span></label>
-                    <input type="text" id="countryName" name="countryName" value="CN" required>
+                    <input type="text" id="countryName" name="countryName" value="{{ default_values['countryName'] }}" required>
                 </div>
                 <div class="form-group">
                     <label for="orgName">{{ _('Organization Name') }} <span class="tooltip" data-tooltip="{{ _('Your organization name') }}">ⓘ</span></label>
-                    <input type="text" id="orgName" name="orgName" value="Myweb" required>
+                    <input type="text" id="orgName" name="orgName" value="{{ default_values['orgName'] }}" required>
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
                     <label for="ouName">{{ _('Organizational Unit Name') }} <span class="tooltip" data-tooltip="{{ _('Your department or unit name') }}">ⓘ</span></label>
-                    <input type="text" id="ouName" name="ouName" value="Myweb Application" required>
+                    <input type="text" id="ouName" name="ouName" value="{{ default_values['ouName'] }}" required>
                 </div>
                 <div class="form-group">
                     <label for="cnRoot">{{ _('Root Certificate Common Name') }} <span class="tooltip" data-tooltip="{{ _('Common name for the root certificate') }}">ⓘ</span></label>
-                    <input type="text" id="cnRoot" name="cnRoot" value="Application" required>
+                    <input type="text" id="cnRoot" name="cnRoot" value="{{ default_values['cnRoot'] }}" required>
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
                     <label for="cnSub">{{ _('Sub Certificate Common Name') }} <span class="tooltip" data-tooltip="{{ _('Common name for the sub certificate (usually your domain name)') }}">ⓘ</span></label>
-                    <input type="text" id="cnSub" name="cnSub" value="his-erp-lingqu.Mywebcloud.com" required>
+                    <input type="text" id="cnSub" name="cnSub" value="{{ default_values['cnSub'] }}" required>
                 </div>
                 <div class="form-group">
                     <label for="password">{{ _('Password') }} <span class="tooltip" data-tooltip="{{ _('Password for keystore and truststore') }}">ⓘ</span></label>
-                    <input type="password" id="password" name="password" value="changeit" required>
+                    <input type="password" id="password" name="password" value="{{ default_values['password'] }}" required>
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
                     <label for="durationDays">{{ _('Validity Period (days)') }} <span class="tooltip" data-tooltip="{{ _('Validity period of the certificate (in days, maximum 3650 days)') }}">ⓘ</span></label>
-                    <input type="number" id="durationDays" name="durationDays" value="3650" required>
+                    <input type="number" id="durationDays" name="durationDays" value="{{ default_values['durationDays'] }}" required>
                 </div>
             </div>
             <div class="form-row">

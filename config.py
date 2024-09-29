@@ -23,3 +23,12 @@ class Config:
 
     # Java keytool settings
     JAVA_HOME = os.environ.get('JAVA_HOME', '/usr/lib/jvm/default-java')
+
+    # Certificate default values
+    DEFAULT_COUNTRY_CODE = os.environ.get('DEFAULT_COUNTRY_CODE', 'CN')
+    DEFAULT_ORG_NAME = os.environ.get('DEFAULT_ORG_NAME', 'Myweb')
+    DEFAULT_OU_NAME = os.environ.get('DEFAULT_OU_NAME', 'Myweb Application')
+    DEFAULT_ROOT_CN = os.environ.get('DEFAULT_ROOT_CN', 'Application')
+    DEFAULT_SUB_CN = os.environ.get('DEFAULT_SUB_CN', 'his-erp-lingqu.Mywebcloud.com')
+    DEFAULT_PASSWORD = os.environ.get('DEFAULT_PASSWORD', 'changeit')
+    DEFAULT_DURATION_DAYS = int(os.environ.get('DEFAULT_DURATION_DAYS', 3650))

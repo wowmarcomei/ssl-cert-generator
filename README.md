@@ -69,6 +69,7 @@
 - 增加了更多的证书生成选项和灵活性
 - 优化的Docker构建过程，使用基础镜像加速构建
 - 支持多语言（目前支持英语和中文）
+- 支持通过环境变量设置证书默认值
 
 ## 本地安装和运行
 
@@ -126,6 +127,20 @@
 
    ```
    docker run -p 5000:5000 ssl-cert-generator:latest
+   ```
+
+   如果你想设置证书的默认值，可以使用环境变量：
+
+   ```
+   docker run -p 5000:5000 \
+     -e DEFAULT_COUNTRY_CODE=US \
+     -e DEFAULT_ORG_NAME=MyOrganization \
+     -e DEFAULT_OU_NAME="IT Department" \
+     -e DEFAULT_ROOT_CN="My Root CA" \
+     -e DEFAULT_SUB_CN=example.com \
+     -e DEFAULT_PASSWORD=mysecretpassword \
+     -e DEFAULT_DURATION_DAYS=365 \
+     ssl-cert-generator:latest
    ```
 
 4. 打开Web浏览器，访问 http://localhost:5000

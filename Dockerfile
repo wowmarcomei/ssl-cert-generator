@@ -16,5 +16,14 @@ RUN python compile_translations.py
 # Expose the port the app runs on
 EXPOSE 5000
 
+# Environment variables that can be set at runtime:
+# DEFAULT_COUNTRY_CODE
+# DEFAULT_ORG_NAME
+# DEFAULT_OU_NAME
+# DEFAULT_ROOT_CN
+# DEFAULT_SUB_CN
+# DEFAULT_PASSWORD
+# DEFAULT_DURATION_DAYS
+
 # Run the application
 CMD ["python", "app.py"]

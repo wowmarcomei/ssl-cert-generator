@@ -138,13 +138,31 @@ def save_log(log_content):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    default_values = {
+        'countryName': app.config['DEFAULT_COUNTRY_CODE'],
+        'orgName': app.config['DEFAULT_ORG_NAME'],
+        'ouName': app.config['DEFAULT_OU_NAME'],
+        'cnRoot': app.config['DEFAULT_ROOT_CN'],
+        'cnSub': app.config['DEFAULT_SUB_CN'],
+        'password': app.config['DEFAULT_PASSWORD'],
+        'durationDays': app.config['DEFAULT_DURATION_DAYS']
+    }
+    return render_template('index.html', default_values=default_values)
 
 @app.route('/generate', methods=['POST'])
 @limiter.limit("10 per minute")
 def generate():
     try:
         data = request.form.to_dict()
+        # Use default values if not provided in the form
+        data['countryName'] = data.get('countryName') or app.config['DEFAULT_COUNTRY_CODE']
+        data['orgName'] = data.get('orgName') or app.config['DEFAULT_ORG_NAME']
+        data['ouName'] = data.get('ouName') or app.config['DEFAULT_OU_NAME']
+        data['cnRoot'] = data.get('cnRoot') or app.config['DEFAULT_ROOT_CN']
+        data['cnSub'] = data.get('cnSub') or app.config['DEFAULT_SUB_CN']
+        data['password'] = data.get('password') or app.config['DEFAULT_PASSWORD']
+        data['durationDays'] = data.get('durationDays') or app.config['DEFAULT_DURATION_DAYS']
+        
         validate_input(data)
         
         # Handle file uploads
