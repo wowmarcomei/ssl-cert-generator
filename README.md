@@ -1,21 +1,23 @@
-# SSL 证书生成器
+# SSL Certificate Generator
 
-这是一个基于Web的SSL证书生成器，可以创建自签名的根证书和子证书，以及相应的keystore和truststore文件。现在支持上传现有的根证书和密钥。
+[中文版](README_cn.md)
 
-## 系统要求
+This is a web-based SSL certificate generator that can create self-signed root certificates and sub-certificates, as well as corresponding keystore and truststore files. It now supports uploading existing root certificates and keys.
+
+## System Requirements
 
 - Python 3.11+
 - Flask
 - Flask-Limiter
 - Flask-Babel
 - OpenSSL 1.1.1f
-- Java（用于keytool命令）
+- Java (for keytool command)
 
-或者
+Or
 
 - Docker
 
-## 文件结构
+## File Structure
 
 ```
 .
@@ -27,7 +29,7 @@
 │   └── script.js
 ├── templates/
 │   └── index.html
-├── dist/  (自动创建)
+├── dist/  (auto-created)
 ├── Dockerfile
 ├── Dockerfile.base
 ├── test_cert_generator.py
@@ -48,88 +50,88 @@
 └── README.md
 ```
 
-## 文件说明
+## File Descriptions
 
-- `app.py`: 主应用文件，包含Flask路由和主要逻辑
-- `config.py`: 配置文件，包含应用程序的设置
-- `cert_generator.py`: 证书生成逻辑
-- `static/`: 静态文件目录
-- `templates/`: HTML模板目录
-- `dist/`: 生成的证书和密钥存储目录
-- `Dockerfile`: 用于构建应用镜像的Dockerfile
-- `Dockerfile.base`: 用于构建基础镜像的Dockerfile
-- `test_cert_generator.py`: 用于测试证书生成功能的脚本
-- `compile_translations.py`: 用于编译翻译文件的脚本
-- `translations/`: 包含不同语言的翻译文件
+- `app.py`: Main application file containing Flask routes and primary logic
+- `config.py`: Configuration file containing application settings
+- `cert_generator.py`: Certificate generation logic
+- `static/`: Static file directory
+- `templates/`: HTML template directory
+- `dist/`: Directory for generated certificates and key stores
+- `Dockerfile`: Dockerfile for building the application image
+- `Dockerfile.base`: Dockerfile for building the base image
+- `test_cert_generator.py`: Script for testing certificate generation functionality
+- `compile_translations.py`: Script for compiling translation files
+- `translations/`: Contains translation files for different languages
 
-## 新功能
+## New Features
 
-- 支持上传现有的根证书和密钥文件
-- 可以为keystore和truststore设置自定义密码
-- 增加了更多的证书生成选项和灵活性
-- 优化的Docker构建过程，使用基础镜像加速构建
-- 支持多语言（目前支持英语和中文）
-- 支持通过环境变量设置证书默认值
+- Support for uploading existing root certificates and key files
+- Custom password setting for keystore and truststore
+- More certificate generation options and flexibility
+- Optimized Docker build process using a base image for faster builds
+- Multi-language support (currently English and Chinese)
+- Support for setting certificate default values via environment variables
 
-## 本地安装和运行
+## Local Installation and Running
 
-1. 克隆此仓库或下载源代码。
+1. Clone this repository or download the source code.
 
-2. 安装所需的Python包：
+2. Install the required Python packages:
 
    ```
    pip install flask flask-limiter flask-babel
    ```
 
-3. 确保系统中已安装OpenSSL 1.1.1f和Java。
+3. Ensure OpenSSL 1.1.1f and Java are installed on your system.
 
-4. 设置环境变量（可选）：
+4. Set environment variables (optional):
    ```
    export DEBUG=True
    export HOST=0.0.0.0
    export PORT=5000
    export CERT_OUTPUT_DIR=dist
    export SECRET_KEY=your-secret-key-here
-   export KEYTOOL_PATH=/path/to/keytool  # 如果keytool不在默认路径
+   export KEYTOOL_PATH=/path/to/keytool  # If keytool is not in the default path
    ```
 
-5. 编译翻译文件：
+5. Compile translation files:
 
    ```
    python compile_translations.py
    ```
 
-6. 运行Flask应用：
+6. Run the Flask application:
 
    ```
    python app.py
    ```
 
-7. 打开Web浏览器，访问 http://localhost:5000
+7. Open a web browser and visit http://localhost:5000
 
-## 使用Docker
+## Using Docker
 
-我们现在使用两阶段构建过程来优化Docker镜像构建。如果你想使用Docker，可以按照以下步骤构建和运行容器：
+We now use a two-stage build process to optimize Docker image building. If you want to use Docker, follow these steps to build and run the container:
 
-1. 构建基础镜像（仅在首次构建或基础环境变更时需要）：
+1. Build the base image (only needed for the first build or when the base environment changes):
 
    ```
    docker build -t ssl-cert-generator-base:latest -f Dockerfile.base .
    ```
 
-2. 构建应用镜像：
+2. Build the application image:
 
    ```
    docker build -t ssl-cert-generator:latest .
    ```
 
-3. 运行Docker容器：
+3. Run the Docker container:
 
    ```
    docker run -p 5000:5000 ssl-cert-generator:latest
    ```
 
-   如果你想设置证书的默认值，可以使用环境变量：
+   If you want to set default values for the certificates, you can use environment variables:
 
    ```
    docker run -p 5000:5000 \
@@ -143,127 +145,127 @@
      ssl-cert-generator:latest
    ```
 
-4. 打开Web浏览器，访问 http://localhost:5000
+4. Open a web browser and visit http://localhost:5000
 
-注意：Docker环境中已经配置了Java和keytool，无需额外设置。
+Note: Java and keytool are already configured in the Docker environment, no additional setup is needed.
 
-## 配置keytool路径
+## Configuring keytool path
 
-默认情况下，应用程序会尝试使用系统PATH中的keytool。如果keytool不在默认路径或你想使用特定版本的keytool，可以通过以下方式设置：
+By default, the application will try to use keytool from the system PATH. If keytool is not in the default path or you want to use a specific version of keytool, you can set it as follows:
 
-1. 在运行应用程序之前，设置KEYTOOL_PATH环境变量：
+1. Before running the application, set the KEYTOOL_PATH environment variable:
    ```
    export KEYTOOL_PATH=/path/to/your/keytool
    ```
 
-2. 如果使用Docker，可以在运行容器时通过-e参数设置环境变量：
+2. If using Docker, you can set the environment variable when running the container using the -e parameter:
    ```
    docker run -p 5000:5000 -e KEYTOOL_PATH=/path/to/your/keytool ssl-cert-generator:latest
    ```
 
-## 翻译
+## Translations
 
-本项目支持多语言，目前包括英语和中文。翻译文件位于 `translations/` 目录下。
+This project supports multiple languages, currently including English and Chinese. Translation files are located in the `translations/` directory.
 
-### 添加新的翻译
+### Adding New Translations
 
-1. 在 `translations/` 目录下为新语言创建一个子目录，例如 `translations/fr/` 用于法语。
-2. 在新创建的语言目录中创建 `LC_MESSAGES/` 子目录。
-3. 复制 `messages.po` 文件到新的 `LC_MESSAGES/` 目录中。
-4. 编辑 `messages.po` 文件，添加新语言的翻译。
+1. Create a subdirectory for the new language in the `translations/` directory, e.g., `translations/fr/` for French.
+2. Create an `LC_MESSAGES/` subdirectory in the newly created language directory.
+3. Copy the `messages.po` file to the new `LC_MESSAGES/` directory.
+4. Edit the `messages.po` file to add translations for the new language.
 
-### 编译翻译文件
+### Compiling Translation Files
 
-在对翻译文件进行更改后，需要编译它们以生成 `.mo` 文件。可以通过以下方式编译翻译：
+After making changes to translation files, they need to be compiled to generate `.mo` files. You can compile translations as follows:
 
-1. 在本地开发环境中：
+1. In the local development environment:
    ```
    python compile_translations.py
    ```
 
-2. 在 Docker 构建过程中：
-   翻译文件会在 Docker 镜像构建过程中自动编译。无需手动操作。
+2. During the Docker build process:
+   Translation files are automatically compiled during Docker image building. No manual operation is required.
 
-## 使用说明
+## Usage Instructions
 
-1. 访问Web界面，填写证书信息表单。
-2. 如果你有现有的根证书和密钥，可以在相应的字段上传这些文件。
-3. 设置证书的有效期（天数），最长为3650天。
-4. 为keystore和truststore设置密码。
-5. 点击"生成证书"按钮。
-6. 生成完成后，你将看到生成的文件列表、密码信息和下载链接。
-7. 所有生成的文件都保存在'dist'目录中。
+1. Access the web interface and fill out the certificate information form.
+2. If you have existing root certificates and keys, you can upload them in the corresponding fields.
+3. Set the validity period for the certificate (in days), maximum 3650 days.
+4. Set passwords for keystore and truststore.
+5. Click the "Generate Certificate" button.
+6. After generation is complete, you will see a list of generated files, password information, and download links.
+7. All generated files are saved in the 'dist' directory.
 
-## GitHub Actions 自动构建和推送
+## GitHub Actions Automatic Build and Push
 
-本项目包含两个GitHub Actions工作流程，用于自动构建和推送Docker镜像到GitHub Container Registry和Docker Hub（如果配置）。
+This project contains two GitHub Actions workflows for automatically building and pushing Docker images to GitHub Container Registry and Docker Hub (if configured).
 
-1. `build-base-image.yml`: 构建和推送基础镜像
-   - 触发条件：当 Dockerfile.base 文件发生变化时，或手动触发
-   - 作用：构建并推送基础镜像
-   - 标签：
+1. `build-base-image.yml`: Build and push the base image
+   - Trigger conditions: When the Dockerfile.base file changes, or manually triggered
+   - Function: Build and push the base image
+   - Tags:
      - latest
-     - 日期标签（格式：YYYYMMDD，例如 20240929）
+     - Date tag (format: YYYYMMDD, e.g., 20240929)
 
-2. `build-app-image.yml`: 构建和推送应用镜像
-   - 触发条件：
-     a) 当 build-base-image 工作流完成时
-     b) 当代码推送到 master 分支时（除了 Dockerfile.base 的变化）
-     c) 当创建 pull request 到 master 分支时
-     d) 手动触发
-   - 作用：构建并推送应用镜像，使用最新的基础镜像
-   - 标签：
+2. `build-app-image.yml`: Build and push the application image
+   - Trigger conditions:
+     a) When the build-base-image workflow completes
+     b) When code is pushed to the master branch (except for Dockerfile.base changes)
+     c) When a pull request is created to the master branch
+     d) Manually triggered
+   - Function: Build and push the application image, using the latest base image
+   - Tags:
      - latest
-     - 日期标签（格式：YYYYMMDD，例如 20240929）
+     - Date tag (format: YYYYMMDD, e.g., 20240929)
 
-这种设置确保了应用镜像总是基于最新的基础镜像构建，同时也允许在基础镜像没有变化的情况下独立更新应用镜像。使用日期标签可以方便地追踪不同版本的镜像。
+This setup ensures that the application image is always built based on the latest base image, while also allowing independent updates to the application image when the base image hasn't changed. Using date tags makes it easy to track different versions of the images.
 
-### 设置步骤
+### Setup Steps
 
-1. 获取Docker Hub访问令牌：
-   - 登录到你的Docker Hub账户
-   - 点击你的用户名，然后选择 "Account Settings"
-   - 在左侧菜单中，点击 "Security"
-   - 在 "Access Tokens" 部分，点击 "New Access Token"
-   - 给token起一个名字，选择适当的权限（至少需要"Read, Write, Delete"权限）
-   - 点击 "Generate" 并复制生成的token
-   - 将这个token作为 `DOCKERHUB_TOKEN` 的值添加到GitHub Secrets中
+1. Get a Docker Hub access token:
+   - Log in to your Docker Hub account
+   - Click on your username, then select "Account Settings"
+   - In the left menu, click on "Security"
+   - In the "Access Tokens" section, click "New Access Token"
+   - Give the token a name and select appropriate permissions (at least "Read, Write, Delete" permissions are needed)
+   - Click "Generate" and copy the generated token
+   - Add this token as the value for `DOCKERHUB_TOKEN` in GitHub Secrets
 
-2. 在GitHub仓库中，进入 "Settings" > "Security" >  "Secrets and variables" > "Actions"。
+2. In your GitHub repository, go to "Settings" > "Security" > "Secrets and variables" > "Actions".
 
-3. 添加以下secrets：
-   - `DOCKERHUB_USERNAME`: 你的Docker Hub用户名
-   - `DOCKERHUB_TOKEN`: 你的Docker Hub访问令牌（不是密码）
+3. Add the following secrets:
+   - `DOCKERHUB_USERNAME`: Your Docker Hub username
+   - `DOCKERHUB_TOKEN`: Your Docker Hub access token (not your password)
 
-   注意：如果你没有Docker Hub账号或不想推送到Docker Hub，可以跳过这一步。Action会自动只推送到GitHub Container Registry。
+   Note: If you don't have a Docker Hub account or don't want to push to Docker Hub, you can skip this step. The Action will automatically only push to GitHub Container Registry.
 
-4. 确保你的GitHub账户有权限推送到GitHub Container Registry。如果没有，你可能需要在个人设置中启用它。
+4. Ensure your GitHub account has permission to push to GitHub Container Registry. If not, you may need to enable it in your personal settings.
 
-5. 推送代码到master分支或创建一个pull request到master分支，这将触发GitHub Actions。
+5. Push code to the master branch or create a pull request to the master branch, this will trigger GitHub Actions.
 
-6. Actions将自动构建x86和ARM架构的Docker镜像，并推送到配置的仓库。
+6. Actions will automatically build Docker images for x86 and ARM architectures and push them to the configured repositories.
 
-注意：如果你没有设置Docker Hub凭证，Actions将只推送到GitHub Container Registry。
+Note: If you haven't set up Docker Hub credentials, Actions will only push to GitHub Container Registry.
 
-## 错误处理
+## Error Handling
 
-如果在证书生成过程中遇到任何问题，错误信息将显示在Web页面上。
+If any problems occur during the certificate generation process, error messages will be displayed on the web page.
 
-要查看更详细的错误日志：
+To view more detailed error logs:
 
-1. 如果本地运行，检查运行 `python app.py` 的终端窗口。
-2. 如果使用Docker，可以使用 `docker logs <container_id>` 查看日志。
+1. If running locally, check the terminal window running `python app.py`.
+2. If using Docker, you can use `docker logs <container_id>` to view logs.
 
-## 注意事项
+## Notes
 
-- 这个系统生成的是自签名证书，不适用于生产环境。在实际使用中，你可能需要使用受信任的证书颁发机构（CA）签名的证书。
-- 确保在使用此系统时遵守相关的安全最佳实践，特别是在处理私钥和密码时。
-- 这个系统实现了基本的速率限制，但在生产环境中使用时可能需要更强大的安全措施，如用户认证和授权。
+- The certificates generated by this system are self-signed and not suitable for production environments. In actual use, you may need to use certificates signed by a trusted certificate authority (CA).
+- Ensure you follow relevant security best practices when using this system, especially when handling private keys and passwords.
+- This system implements basic rate limiting, but stronger security measures such as user authentication and authorization may be needed when used in a production environment.
 
-## 贡献
+## Contributions
 
-欢迎提交问题报告和拉取请求来帮助改进这个项目。
+Issue reports and pull requests are welcome to help improve this project.
 
-## 许可
+## License
 
 [MIT License](https://opensource.org/licenses/MIT)
