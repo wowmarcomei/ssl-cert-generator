@@ -80,7 +80,7 @@
 2. 安装所需的Python包：
 
    ```
-   pip install flask flask-limiter flask-babel
+   pip install flask flask-limiter flask-babel setuptools
    ```
 
 3. 确保系统中已安装OpenSSL 1.1.1f和Java。

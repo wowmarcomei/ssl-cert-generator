@@ -80,7 +80,7 @@ Or
 2. Install the required Python packages:
 
    ```
-   pip install flask flask-limiter flask-babel
+   pip install flask flask-limiter flask-babel setuptools
    ```
 
 3. Ensure OpenSSL 1.1.1f and Java are installed on your system.

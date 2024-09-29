@@ -7,7 +7,8 @@ WORKDIR /app
 # Copy the project files to the working directory
 COPY . /app
 
-# Install Babel if not already installed
+# Install setuptools and Babel
+RUN pip install setuptools
 RUN pip install babel
 
 # Compile translations
