@@ -1,5 +1,5 @@
 # Use the base image we created
-FROM ssl-cert-generator-base:latest
+FROM wowmarcomei/ssl-cert-generator-base:latest
 
 # Set the working directory
 WORKDIR /app
