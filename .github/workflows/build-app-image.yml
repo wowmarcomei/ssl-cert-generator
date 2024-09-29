@@ -1,6 +1,10 @@
 name: Build and Push App Image
 
 on:
+  workflow_run:
+    workflows: ["Build and Push Base Image"]
+    types:
+      - completed
   push:
     branches:
       - master
@@ -49,3 +53,5 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/ssl-cert-generator:${{ github.sha }}
             ghcr.io/${{ github.repository_owner }}/ssl-cert-generator:latest
             ghcr.io/${{ github.repository_owner }}/ssl-cert-generator:${{ github.sha }}
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/ssl-cert-generator-base:latest
+          cache-to: type=inline

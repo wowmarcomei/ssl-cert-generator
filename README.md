@@ -142,19 +142,22 @@
 本项目包含两个GitHub Actions工作流程，用于自动构建和推送Docker镜像到GitHub Container Registry和Docker Hub（如果配置）。
 
 1. `build-base-image.yml`: 构建和推送基础镜像
+   - 触发条件：当 Dockerfile.base 文件发生变化时，或手动触发
+   - 作用：构建并推送基础镜像
+
 2. `build-app-image.yml`: 构建和推送应用镜像
+   - 触发条件：
+     a) 当 build-base-image 工作流完成时
+     b) 当代码推送到 master 分支时（除了 Dockerfile.base 的变化）
+     c) 当创建 pull request 到 master 分支时
+     d) 手动触发
+   - 作用：构建并推送应用镜像，使用最新的基础镜像
+
+这种设置确保了应用镜像总是基于最新的基础镜像构建，同时也允许在基础镜像没有变化的情况下独立更新应用镜像。
 
 ### 设置步骤
 
-1. 在GitHub仓库中，进入 "Settings" > "Secrets and variables" > "Actions"。
-
-2. 添加以下secrets：
-   - `DOCKERHUB_USERNAME`: 你的Docker Hub用户名
-   - `DOCKERHUB_TOKEN`: 你的Docker Hub访问令牌（不是密码）
-
-   注意：如果你没有Docker Hub账号或不想推送到Docker Hub，可以跳过这一步。Action会自动只推送到GitHub Container Registry。
-
-3. 获取Docker Hub访问令牌：
+1. 获取Docker Hub访问令牌：
    - 登录到你的Docker Hub账户
    - 点击你的用户名，然后选择 "Account Settings"
    - 在左侧菜单中，点击 "Security"
@@ -162,6 +165,14 @@
    - 给token起一个名字，选择适当的权限（至少需要"Read, Write, Delete"权限）
    - 点击 "Generate" 并复制生成的token
    - 将这个token作为 `DOCKERHUB_TOKEN` 的值添加到GitHub Secrets中
+
+2. 在GitHub仓库中，进入 "Settings" > "Security" >  "Secrets and variables" > "Actions"。
+
+3. 添加以下secrets：
+   - `DOCKERHUB_USERNAME`: 你的Docker Hub用户名
+   - `DOCKERHUB_TOKEN`: 你的Docker Hub访问令牌（不是密码）
+
+   注意：如果你没有Docker Hub账号或不想推送到Docker Hub，可以跳过这一步。Action会自动只推送到GitHub Container Registry。
 
 4. 确保你的GitHub账户有权限推送到GitHub Container Registry。如果没有，你可能需要在个人设置中启用它。
 
