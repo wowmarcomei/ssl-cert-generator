@@ -7,6 +7,7 @@
 - Python 3.11+
 - Flask
 - Flask-Limiter
+- Flask-Babel
 - OpenSSL 1.1.1f
 - Java（用于keytool命令）
 
@@ -28,10 +29,12 @@
 │   └── index.html
 ├── dist/  (自动创建)
 ├── Dockerfile
+├── Dockerfile.base
 ├── test_cert_generator.py
 ├── .github/
 │   └── workflows/
-│       └── docker-build-push.yml
+│       ├── build-base-image.yml
+│       └── build-app-image.yml
 └── README.md
 ```
 
@@ -43,6 +46,8 @@
 - `static/`: 静态文件目录
 - `templates/`: HTML模板目录
 - `dist/`: 生成的证书和密钥存储目录
+- `Dockerfile`: 用于构建应用镜像的Dockerfile
+- `Dockerfile.base`: 用于构建基础镜像的Dockerfile
 - `test_cert_generator.py`: 用于测试证书生成功能的脚本
 
 ## 新功能
@@ -50,6 +55,7 @@
 - 支持上传现有的根证书和密钥文件
 - 可以为keystore和truststore设置自定义密码
 - 增加了更多的证书生成选项和灵活性
+- 优化的Docker构建过程，使用基础镜像加速构建
 
 ## 本地安装和运行
 
@@ -58,7 +64,7 @@
 2. 安装所需的Python包：
 
    ```
-   pip install flask flask-limiter
+   pip install flask flask-limiter flask-babel
    ```
 
 3. 确保系统中已安装OpenSSL 1.1.1f和Java。
@@ -83,21 +89,27 @@
 
 ## 使用Docker
 
-如果你prefer使用Docker，可以按照以下步骤构建和运行容器：
+我们现在使用两阶段构建过程来优化Docker镜像构建。如果你想使用Docker，可以按照以下步骤构建和运行容器：
 
-1. 构建Docker镜像：
-
-   ```
-   docker build -t ssl-cert-generator .
-   ```
-
-2. 运行Docker容器：
+1. 构建基础镜像（仅在首次构建或基础环境变更时需要）：
 
    ```
-   docker run -p 5000:5000 ssl-cert-generator
+   docker build -t ssl-cert-generator-base:latest -f Dockerfile.base .
    ```
 
-3. 打开Web浏览器，访问 http://localhost:5000
+2. 构建应用镜像：
+
+   ```
+   docker build -t ssl-cert-generator:latest .
+   ```
+
+3. 运行Docker容器：
+
+   ```
+   docker run -p 5000:5000 ssl-cert-generator:latest
+   ```
+
+4. 打开Web浏览器，访问 http://localhost:5000
 
 注意：Docker环境中已经配置了Java和keytool，无需额外设置。
 
@@ -112,7 +124,7 @@
 
 2. 如果使用Docker，可以在运行容器时通过-e参数设置环境变量：
    ```
-   docker run -p 5000:5000 -e KEYTOOL_PATH=/path/to/your/keytool ssl-cert-generator
+   docker run -p 5000:5000 -e KEYTOOL_PATH=/path/to/your/keytool ssl-cert-generator:latest
    ```
 
 ## 使用说明
@@ -125,9 +137,12 @@
 6. 生成完成后，你将看到生成的文件列表、密码信息和下载链接。
 7. 所有生成的文件都保存在'dist'目录中。
 
-## GitHub Action 自动构建和推送
+## GitHub Actions 自动构建和推送
 
-本项目包含一个GitHub Action，可以自动构建多平台Docker镜像并推送到GitHub Container Registry和Docker Hub。
+本项目包含两个GitHub Actions工作流程，用于自动构建和推送Docker镜像到GitHub Container Registry和Docker Hub（如果配置）。
+
+1. `build-base-image.yml`: 构建和推送基础镜像
+2. `build-app-image.yml`: 构建和推送应用镜像
 
 ### 设置步骤
 
@@ -150,11 +165,11 @@
 
 4. 确保你的GitHub账户有权限推送到GitHub Container Registry。如果没有，你可能需要在个人设置中启用它。
 
-5. 推送代码到main分支或创建一个pull request到main分支，这将触发GitHub Action。
+5. 推送代码到master分支或创建一个pull request到master分支，这将触发GitHub Actions。
 
-6. Action将自动构建x86和ARM架构的Docker镜像，并推送到配置的仓库，标签包括日期（格式为YYYYMMDD）和latest。
+6. Actions将自动构建x86和ARM架构的Docker镜像，并推送到配置的仓库。
 
-注意：如果你没有设置Docker Hub凭证，Action将只推送到GitHub Container Registry。
+注意：如果你没有设置Docker Hub凭证，Actions将只推送到GitHub Container Registry。
 
 ## 错误处理
 
